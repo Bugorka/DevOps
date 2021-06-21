@@ -1,0 +1,17 @@
+Vagrant.configure("2") do |config|
+  config.vm.define "debian" do |debian|
+    debian.vm.box = "debian/bullseye64"
+    debian.vm.box_version = "11.20210409.1"
+    debian.vm.provider "virtualbox" do |vb|
+        vb.gui = false
+        vb.memory = "512"
+    end
+    debian.vm.provision "shell", inline: <<-SHELL
+      sudo useradd -m updater
+      sudo echo "updater:vagrant" | chpasswd
+      sudo echo "updater ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+      sudo apt-get -y update
+      sudo apt-get install -y vim git wget curl
+      SHELL
+  end
+end
